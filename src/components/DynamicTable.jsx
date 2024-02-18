@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from 'react';
 import {
   Table,
   TableHeader,
@@ -13,30 +13,30 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-} from "@nextui-org/react";
-import { PlusIcon } from "./Icons/PlusIcon";
-import { SearchIcon } from "./Icons/SearchIcon";
-import { ChevronDownIcon } from "./Icons/ChevronDownIcon";
-import capitalize from "../helpers/capitalize";
+} from '@nextui-org/react';
+import { PlusIcon } from './Icons/PlusIcon';
+import { SearchIcon } from './Icons/SearchIcon';
+import { ChevronDownIcon } from './Icons/ChevronDownIcon';
+import capitalize from '../helpers/capitalize';
 
-export default function DynamicTable({ columns, rows, onUpdateRowValues }) {
+export default function DynamicTable({ columns, rows, onChangePropertyValue }) {
   const [isLoading, _setIsLoading] = useState(false);
-  const [filterValue, setFilterValue] = useState("");
+  const [filterValue, setFilterValue] = useState('');
   const [selectedKeys, setSelectedKeys] = useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState("all");
+  const [visibleColumns, setVisibleColumns] = useState('all');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
-  const loadingState = isLoading || rows?.length === 0 ? "loading" : "idle";
+  const loadingState = isLoading || rows?.length === 0 ? 'loading' : 'idle';
 
   const radioButtons = [
-    { id: 2, title: "Pickup", defaultChecked: true, value: "pickup" },
-    { id: 1, title: "Delivery", defaultChecked: false, value: "delivery" },
+    { id: 2, title: 'Pickup', defaultChecked: true, value: 'pickup' },
+    { id: 1, title: 'Delivery', defaultChecked: false, value: 'delivery' },
   ];
 
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = useMemo(() => {
-    if (visibleColumns === "all") return columns;
+    if (visibleColumns === 'all') return columns;
 
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid)
@@ -51,11 +51,11 @@ export default function DynamicTable({ columns, rows, onUpdateRowValues }) {
         columns.some((column) => {
           const cellValue = data[column.uid];
 
-          if (typeof cellValue === "string") {
+          if (typeof cellValue === 'string') {
             return cellValue.toLowerCase().includes(filterValue.toLowerCase());
           }
 
-          if (typeof cellValue === "number") {
+          if (typeof cellValue === 'number') {
             return cellValue.toString().includes(filterValue);
           }
 
@@ -66,6 +66,8 @@ export default function DynamicTable({ columns, rows, onUpdateRowValues }) {
 
     return filteredData;
   }, [rows, filterValue]);
+
+  const randomNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -80,20 +82,19 @@ export default function DynamicTable({ columns, rows, onUpdateRowValues }) {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-      case "radioBtnGroup":
+      case 'radioBtnGroup':
         return (
           <fieldset className="flex items-center space-x-10 space-y-0">
             {radioButtons.map((rad) => (
-              <div key={rad.id} className="flex items-center">
+              <div key={rad.id} className="flex items-center ">
                 <input
                   name={`group-${data.id}`}
                   type="radio"
                   className="h-4 w-4"
-                  defaultChecked={rad.defaultChecked}
+                  defaultChecked={data.deliveryType == rad.value}
                   value={rad.value}
-                  onChange={(e) => {
-                    data[columnKey] = e.target.value;
-                    onUpdateRowValues(data);
+                  onChange={({ target: { value } }) => {
+                    onChangePropertyValue(data.id, 'deliveryType', value);
                   }}
                 />
                 <label
@@ -122,12 +123,12 @@ export default function DynamicTable({ columns, rows, onUpdateRowValues }) {
       setFilterValue(value);
       setPage(1);
     } else {
-      setFilterValue("");
+      setFilterValue('');
     }
   }, []);
 
   const onClear = useCallback(() => {
-    setFilterValue("");
+    setFilterValue('');
     setPage(1);
   }, []);
 
@@ -138,8 +139,8 @@ export default function DynamicTable({ columns, rows, onUpdateRowValues }) {
           <Input
             isClearable
             classNames={{
-              base: "w-full sm:max-w-[44%]",
-              inputWrapper: "h-max",
+              base: 'w-full sm:max-w-[44%]',
+              inputWrapper: 'h-max',
             }}
             placeholder="Search by..."
             startContent={<SearchIcon />}
@@ -225,10 +226,10 @@ export default function DynamicTable({ columns, rows, onUpdateRowValues }) {
     <Table
       aria-label="nextui-dynamic-table"
       isHeaderSticky
-      bottomContent={loadingState === "idle" && bottomContent}
+      bottomContent={loadingState === 'idle' && bottomContent}
       bottomContentPlacement="outside"
       classNames={{
-        wrapper: "max-h-[382px]",
+        wrapper: 'max-h-[382px]',
       }}
       selectedKeys={selectedKeys}
       selectionMode="multiple"
@@ -240,13 +241,13 @@ export default function DynamicTable({ columns, rows, onUpdateRowValues }) {
         {(column) => (
           <TableColumn
             key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
+            align={column.uid === 'actions' ? 'center' : 'start'}
           >
             {column.name}
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No data found"} items={items}>
+      <TableBody emptyContent={'No data found'} items={items}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

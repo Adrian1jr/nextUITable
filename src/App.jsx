@@ -1,37 +1,33 @@
-import { useEffect, useState } from "react";
-import DynamicTable from "./components/DynamicTable";
+import { useEffect, useState } from 'react';
+import DynamicTable from './components/DynamicTable';
 
 function App() {
   const [rows, setRows] = useState([]);
   const columns = [
-    { name: "Id", uid: "id" },
-    { name: "Name", uid: "name" },
-    { name: "Radio Buttons Group", uid: "radioBtnGroup" },
+    { name: 'Id', uid: 'id' },
+    { name: 'Name', uid: 'name' },
+    { name: 'Radio Buttons Group', uid: 'radioBtnGroup' },
   ];
 
   useEffect(() => {
     setRows([
-      { id: 1, name: "Tony Reichert", radioBtnGroup: "pickup" },
-      { id: 2, name: "Zoey Lang", radioBtnGroup: "pickup" },
-      { id: 3, name: "Jane Fisher", radioBtnGroup: "pickup" },
-      { id: 4, name: "William Howard", radioBtnGroup: "pickup" },
-      { id: 5, name: "Kristen Copper", radioBtnGroup: "pickup" },
-      { id: 6, name: "Brian Kim", radioBtnGroup: "pickup" },
+      { id: 1, name: 'Tony Reichert', deliveryType: 'pickup' },
+      { id: 2, name: 'Zoey Lang', deliveryType: 'delivery' },
+      { id: 3, name: 'Jane Fisher', deliveryType: 'pickup' },
+      { id: 4, name: 'William Howard', deliveryType: 'pickup' },
+      { id: 5, name: 'Kristen Copper', deliveryType: 'pickup' },
+      { id: 6, name: 'Brian Kim', deliveryType: 'pickup' },
     ]);
   }, []);
 
-  const handleUpdateRowValues = (row) => {
-    setRows((prevRows) => {
-      return prevRows.map((item) =>
-        item.id === row.id
-          ? {
-              ...item,
-              radioBtnGroup: row.radioBtnGroup,
-            }
-          : item
-      );
-    });
-  };
+  function handleChangePropertyValue(id, propName, value) {
+    console.log(id, propName, value);
+    setRows((prevRows) =>
+      prevRows.map((row) =>
+        row.id == id ? { ...row, [propName]: value } : row
+      )
+    );
+  }
 
   return (
     <div className="m-10">
@@ -40,7 +36,7 @@ function App() {
       <DynamicTable
         columns={columns}
         rows={rows}
-        onUpdateRowValues={handleUpdateRowValues}
+        onChangePropertyValue={handleChangePropertyValue}
       />
     </div>
   );
