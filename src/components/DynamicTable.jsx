@@ -18,8 +18,16 @@ import { PlusIcon } from "./Icons/PlusIcon";
 import { SearchIcon } from "./Icons/SearchIcon";
 import { ChevronDownIcon } from "./Icons/ChevronDownIcon";
 import capitalize from "../helpers/capitalize";
+import RadioButtonGroup from "./RadioButtonGroup";
 
-export default function DynamicTable({ columns, rows, onChangePropertyValue }) {
+export default function DynamicTable({
+  columns,
+  rows,
+  onChangePropertyValue,
+  customCells,
+  needSelectionMode = false,
+  onSelectedKeysChange = () => {},
+}) {
   const [isLoading, _setIsLoading] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState(new Set([]));
@@ -27,11 +35,6 @@ export default function DynamicTable({ columns, rows, onChangePropertyValue }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const loadingState = isLoading || rows?.length === 0 ? "loading" : "idle";
-
-  const radioButtons = [
-    { id: 2, title: "Pickup", defaultChecked: true, value: "pickup" },
-    { id: 1, title: "Delivery", defaultChecked: false, value: "delivery" },
-  ];
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -80,42 +83,24 @@ export default function DynamicTable({ columns, rows, onChangePropertyValue }) {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
-      case "radioBtnGroup":
-        return (
-          <Button
-            style={{
-              background: "transparent",
-              cursor: "default",
-              border: "none",
-              boxShadow: "none",
-            }}
-            disableAnimation
-          >
-            <fieldset className="flex items-center space-x-10 space-y-0">
-              {radioButtons.map((rad) => (
-                <div key={rad.id} className="flex items-center ">
-                  <input
-                    name={`group-${data.id}`}
-                    type="radio"
-                    className="h-4 w-4"
-                    defaultChecked={data.deliveryType == rad.value}
-                    value={rad.value}
-                    onChange={({ target: { value } }) => {
-                      onChangePropertyValue(data.id, "deliveryType", value);
-                    }}
-                  />
-                  <label
-                    htmlFor={rad.id}
-                    className="ml-2 block text-sm leading-6"
-                  >
-                    {rad.title}
-                  </label>
-                </div>
-              ))}
-            </fieldset>
-          </Button>
-        );
-
+      // If the column is a custom cell, we render the custom cell
+      case "custom":
+        // We check the type of the custom cell and render the appropriate component
+        switch (customCells.type) {
+          case "radioBtnGroup":
+            return (
+              <RadioButtonGroup
+                data={data}
+                radioButtons={customCells.values}
+                onChangePropertyValue={onChangePropertyValue}
+                propertyKey={customCells.propertyKey}
+              />
+            );
+          default:
+            return null;
+        }
+      case "actions":
+        return <p>lol</p>;
       default:
         return cellValue;
     }
@@ -239,12 +224,15 @@ export default function DynamicTable({ columns, rows, onChangePropertyValue }) {
       classNames={{
         wrapper: "max-h-[382px]",
       }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
       topContent={topContent}
       topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onRowAction={() => {}}
+      onRowAction={() => {}} //Prevents user from to only select rows with checkboxes
+      selectionMode={needSelectionMode ? "multiple" : "none"} // Applies selection mode checkbox to the table
+      selectedKeys={selectedKeys}
+      onSelectionChange={(key) => {
+        setSelectedKeys(key);
+        onSelectedKeysChange(key);
+      }}
     >
       <TableHeader columns={headerColumns}>
         {(column) => (

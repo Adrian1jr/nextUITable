@@ -6,8 +6,18 @@ function App() {
   const columns = [
     { name: "Id", uid: "id" },
     { name: "Name", uid: "name" },
-    { name: "Radio Buttons Group", uid: "radioBtnGroup" },
+    { name: "Pickup / Delivery", uid: "custom" },
   ];
+
+  // This object is used to create a custom cell in the table
+  const customCells = {
+    type: "radioBtnGroup",
+    propertyKey: "deliveryType",
+    values: [
+      { id: 2, title: "Pickup", defaultChecked: true, value: "pickup" },
+      { id: 1, title: "Delivery", defaultChecked: false, value: "delivery" },
+    ],
+  };
 
   useEffect(() => {
     setRows([
@@ -20,6 +30,7 @@ function App() {
     ]);
   }, []);
 
+  // This function is called when the user changes the value of a cell in the table
   function handleChangePropertyValue(id, propName, value) {
     setRows((prevRows) =>
       prevRows.map((row) =>
@@ -27,6 +38,19 @@ function App() {
       )
     );
   }
+
+  // This function is called when the user selects a row with the checkbox in the table
+  const handleSelectedKeysChange = (selectedKeys) => {
+    if (selectedKeys === "all") return console.log("All rows selected");
+
+    const keysArray = [...selectedKeys];
+    const numericKeys = keysArray.map((key) => parseInt(key));
+    const selectedKeysWithInfo = rows.filter((item) =>
+      numericKeys.includes(item.id)
+    );
+
+    console.log("Selected rows: ", selectedKeysWithInfo);
+  };
 
   return (
     <div className="m-10">
@@ -36,6 +60,11 @@ function App() {
         columns={columns}
         rows={rows}
         onChangePropertyValue={handleChangePropertyValue}
+        customCells={customCells}
+        needSelectionMode={true}
+        onSelectedKeysChange={(selectedKeys) =>
+          handleSelectedKeysChange(selectedKeys)
+        }
       />
     </div>
   );
