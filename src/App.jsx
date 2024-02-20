@@ -1,14 +1,24 @@
 import { useState } from "react";
 import DynamicTable from "./components/DynamicTable";
 import DialogWithForm from "./components/DialogWithForm";
+import { MdModeEdit } from "react-icons/md";
 
 function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [items, setItems] = useState([]);
   const columns = [
     { name: "Id", uid: "id" },
+    { name: "Actions", uid: "actions" },
     { name: "Name", uid: "name" },
     { name: "Pickup / Delivery", uid: "transactionType" },
+  ];
+
+  const actionButtons = [
+    {
+      name: "Edit",
+      click: (row) => console.log(row),
+      icon: <MdModeEdit />,
+    },
   ];
 
   const handleTableTopButtons = (button) => {
@@ -40,6 +50,7 @@ function App() {
         columns={columns}
         rows={items}
         onTopButtonsClick={handleTableTopButtons}
+        rowButtons={actionButtons}
       />
 
       {isAddModalOpen && (

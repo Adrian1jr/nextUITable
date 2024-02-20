@@ -19,6 +19,7 @@ import { SearchIcon } from "./Icons/SearchIcon";
 import { ChevronDownIcon } from "./Icons/ChevronDownIcon";
 import capitalize from "../helpers/capitalize";
 import RadioButtonGroup from "./RadioButtonGroup";
+import { TableButtonGroup } from "./TableButtonGroup";
 
 export default function DynamicTable({
   columns,
@@ -26,6 +27,7 @@ export default function DynamicTable({
   onTopButtonsClick,
   onChangePropertyValue,
   customCells,
+  rowButtons = [],
   needSelectionMode = false,
   needAddButton = true,
   onSelectedKeysChange = () => {},
@@ -86,7 +88,7 @@ export default function DynamicTable({
 
     switch (columnKey) {
       // If the column is a custom cell, we render the custom cell
-      case "custom":
+      case "customCell":
         // We check the type of the custom cell and render the appropriate component
         switch (customCells.type) {
           case "radioBtnGroup":
@@ -102,7 +104,12 @@ export default function DynamicTable({
             return null;
         }
       case "actions":
-        return <p>lol</p>;
+        return (
+          <TableButtonGroup
+            buttons={rowButtons}
+            rowData={data}
+          ></TableButtonGroup>
+        );
       default:
         return cellValue;
     }

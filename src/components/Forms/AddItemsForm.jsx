@@ -7,7 +7,7 @@ export default function AddItemsForm({ register, onFormSubmit }) {
   const columns = [
     { name: "Id", uid: "id" },
     { name: "Name", uid: "name" },
-    { name: "Pickup / Delivery", uid: "custom" },
+    { name: "Pickup / Delivery", uid: "customCell" },
   ];
 
   // This object is used to create a custom cell in the table
