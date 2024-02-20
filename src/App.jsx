@@ -16,9 +16,20 @@ function App() {
   };
 
   const handleAddItems = (formData) => {
-    const { formValues, items } = formData;
-    console.log(formValues, items);
     setIsAddModalOpen(false);
+    const { items } = formData;
+    if (!items) return;
+
+    setItems((prevItems) => {
+      return [
+        ...prevItems,
+        ...items.map((item, index) => ({
+          id: prevItems.length + index + 1,
+          name: item.name,
+          transactionType: item.transactionType,
+        })),
+      ];
+    });
   };
 
   return (

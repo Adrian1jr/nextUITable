@@ -52,6 +52,8 @@ export default function DialogWithForm({
   }, [isOpen]);
 
   const handleAction = (data) => {
+    handleGetTablesData();
+
     onAction({
       formValues: { ...data },
       ...tablesDataFromForm,
@@ -59,12 +61,7 @@ export default function DialogWithForm({
   };
 
   const handleGetTablesData = (data) => {
-    setTablesDataFromForm((prevData) => {
-      return {
-        ...prevData,
-        ...data,
-      };
-    });
+    setTablesDataFromForm(data);
   };
 
   const handleClose = useCallback(() => {

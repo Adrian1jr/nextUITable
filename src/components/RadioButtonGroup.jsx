@@ -24,7 +24,7 @@ const RadioButtonGroup = ({
               name={`group-${data.id}`}
               type="radio"
               className="h-4 w-4"
-              defaultChecked={rad.defaultChecked}
+              defaultChecked={data[propertyKey] === rad.value}
               value={rad.value}
               onChange={({ target: { value } }) => {
                 onChangePropertyValue(data.id, propertyKey, value);
