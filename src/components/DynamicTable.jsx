@@ -23,9 +23,11 @@ import RadioButtonGroup from "./RadioButtonGroup";
 export default function DynamicTable({
   columns,
   rows,
+  onTopButtonsClick,
   onChangePropertyValue,
   customCells,
   needSelectionMode = false,
+  needAddButton = true,
   onSelectedKeysChange = () => {},
 }) {
   const [isLoading, _setIsLoading] = useState(false);
@@ -167,13 +169,17 @@ export default function DynamicTable({
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              className="w-full sm:w-auto"
-              color="primary"
-              endContent={<PlusIcon />}
-            >
-              Add New
-            </Button>
+
+            {needAddButton && (
+              <Button
+                className="w-full sm:w-auto"
+                color="primary"
+                endContent={<PlusIcon />}
+                onClick={() => onTopButtonsClick("add")}
+              >
+                Add New
+              </Button>
+            )}
           </div>
         </div>
       </div>
