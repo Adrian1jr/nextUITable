@@ -13,6 +13,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
+  Card,
 } from "@nextui-org/react";
 import { PlusIcon } from "./Icons/PlusIcon";
 import { SearchIcon } from "./Icons/SearchIcon";
@@ -20,6 +21,9 @@ import { ChevronDownIcon } from "./Icons/ChevronDownIcon";
 import capitalize from "../helpers/capitalize";
 import RadioButtonGroup from "./RadioButtonGroup";
 import { TableButtonGroup } from "./TableButtonGroup";
+import { Accordion, AccordionItem } from "@nextui-org/react";
+import { useMedia } from "react-use";
+import { FaExclamationCircle } from "react-icons/fa";
 
 export default function DynamicTable({
   columns,
@@ -39,6 +43,44 @@ export default function DynamicTable({
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const loadingState = isLoading || rows?.length === 0 ? "loading" : "idle";
+  const motionProps = {
+    variants: {
+      enter: {
+        y: 0,
+        opacity: 1,
+        height: "auto",
+        transition: {
+          height: {
+            type: "spring",
+            stiffness: 500,
+            damping: 30,
+            duration: 1,
+          },
+          opacity: {
+            easings: "ease",
+            duration: 1,
+          },
+        },
+      },
+      exit: {
+        y: -10,
+        opacity: 0,
+        height: 0,
+        transition: {
+          height: {
+            easings: "ease",
+            duration: 0.25,
+          },
+          opacity: {
+            easings: "ease",
+            duration: 0.3,
+          },
+        },
+      },
+    },
+  };
+
+  const isMobile = useMedia("(max-width: 768px)");
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -229,43 +271,112 @@ export default function DynamicTable({
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
   return (
-    <Table
-      aria-label="nextui-dynamic-table"
-      isHeaderSticky
-      bottomContent={loadingState === "idle" && bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onRowAction={() => {}} //Prevents user from to only select rows with checkboxes
-      selectionMode={needSelectionMode ? "multiple" : "none"} // Applies selection mode checkbox to the table
-      selectedKeys={selectedKeys}
-      onSelectionChange={(key) => {
-        setSelectedKeys(key);
-        onSelectedKeysChange(key);
-      }}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No data found"} items={items}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
+    <>
+      {isMobile ? (
+        <>
+          <div className="flex flex-col gap-4">
+            <div
+              className={`
+            ${needAddButton ? "top-table-flex" : "top-table-flex-no-wrap mb-0"}
+            flex justify-between gap-3 items-end`}
+            >
+              <Input
+                isClearable
+                classNames={{
+                  base: "w-full sm:max-w-[44%]",
+                  inputWrapper: "h-max",
+                }}
+                placeholder="Search by..."
+                startContent={<SearchIcon />}
+                value={filterValue}
+                onClear={() => onClear()}
+                onValueChange={onSearchChange}
+              />
+              <div className="table-action-buttons flex gap-3">
+                {needAddButton && (
+                  <Button
+                    className="w-full sm:w-auto"
+                    color="primary"
+                    endContent={<PlusIcon />}
+                    onClick={() => onTopButtonsClick("add")}
+                  >
+                    Add New
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <Card shadow="sm" className="mt-5 py-5">
+            {items.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full w-full gap-2 text-default-400 text-center">
+                <FaExclamationCircle size={50} />
+                <p>No items found</p>
+              </div>
+            ) : (
+              items.map((item) => (
+                <section
+                  style={{
+                    margin: "0.5rem 0",
+                  }}
+                  key={item.id}
+                >
+                  <Accordion
+                    variant="splitted"
+                    motionProps={motionProps}
+                    selectedKeys={selectedKeys}
+                    onSelectionChange={setSelectedKeys}
+                    isCompact
+                  >
+                    <AccordionItem key={item.id} textValue="accordion-item">
+                      <p>Body</p>
+                    </AccordionItem>
+                  </Accordion>
+                </section>
+              ))
             )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+          </Card>
+        </>
+      ) : (
+        <Table
+          aria-label="nextui-dynamic-table"
+          isHeaderSticky
+          bottomContent={loadingState === "idle" && bottomContent}
+          bottomContentPlacement="outside"
+          classNames={{
+            wrapper: "max-h-[382px]",
+          }}
+          topContent={topContent}
+          topContentPlacement="outside"
+          onRowAction={() => {}} //Prevents user from to only select rows with checkboxes
+          selectionMode={needSelectionMode ? "multiple" : "none"} // Applies selection mode checkbox to the table
+          selectedKeys={selectedKeys}
+          onSelectionChange={(key) => {
+            setSelectedKeys(key);
+            onSelectedKeysChange(key);
+          }}
+        >
+          <TableHeader columns={headerColumns}>
+            {(column) => (
+              <TableColumn
+                key={column.uid}
+                align={column.uid === "actions" ? "center" : "start"}
+              >
+                {column.name}
+              </TableColumn>
+            )}
+          </TableHeader>
+          <TableBody emptyContent={"No data found"} items={items}>
+            {(item) => (
+              <TableRow key={item.id}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      )}
+    </>
   );
 }

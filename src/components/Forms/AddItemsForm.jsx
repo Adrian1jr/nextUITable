@@ -60,13 +60,13 @@ export default function AddItemsForm({ register, onFormSubmit }) {
 
   return (
     <form>
-      <Input
+      {/* <Input
         type="text"
         name="title"
         placeholder="title"
         {...register("title")}
         className="mb-4"
-      />
+      /> */}
 
       <DynamicTable
         columns={columns}
