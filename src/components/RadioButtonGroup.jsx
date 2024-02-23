@@ -5,6 +5,7 @@ const RadioButtonGroup = ({
   radioButtons,
   onChangePropertyValue,
   propertyKey,
+  isMobile,
 }) => {
   return (
     <Button
@@ -17,7 +18,11 @@ const RadioButtonGroup = ({
       }}
       disableAnimation
     >
-      <fieldset className="flex items-center space-x-10 space-y-0">
+      <fieldset
+        className={`flex  
+        ${isMobile ? "flex-col" : "flex-row items-center space-x-10 space-y-0"}
+      `}
+      >
         {radioButtons.map((rad) => (
           <div key={rad.id} className="flex items-center ">
             <input

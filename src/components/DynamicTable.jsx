@@ -14,6 +14,7 @@ import {
   DropdownItem,
   Pagination,
   Card,
+  Checkbox,
 } from "@nextui-org/react";
 import { PlusIcon } from "./Icons/PlusIcon";
 import { SearchIcon } from "./Icons/SearchIcon";
@@ -80,7 +81,7 @@ export default function DynamicTable({
     },
   };
 
-  const isMobile = useMedia("(max-width: 768px)");
+  const isMobile = useMedia("(max-width: 600px)");
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -125,7 +126,7 @@ export default function DynamicTable({
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
-  const renderCell = useCallback((data, columnKey) => {
+  const renderCell = useCallback((data, columnKey, isMobile) => {
     const cellValue = data[columnKey];
 
     switch (columnKey) {
@@ -140,6 +141,7 @@ export default function DynamicTable({
                 radioButtons={customCells.values}
                 onChangePropertyValue={onChangePropertyValue}
                 propertyKey={customCells.propertyKey}
+                isMobile={isMobile}
               />
             );
           default:
@@ -153,7 +155,18 @@ export default function DynamicTable({
           ></TableButtonGroup>
         );
       default:
-        return cellValue;
+        return (
+          <>
+            {isMobile ? (
+              <div className="flex flex-col gap-2 py-3">
+                <p className="text-xs text-gray-400">{capitalize(columnKey)}</p>
+                <p className="text-sm text-gray-700">{cellValue}</p>
+              </div>
+            ) : (
+              cellValue
+            )}
+          </>
+        );
     }
   }, []);
 
@@ -307,35 +320,59 @@ export default function DynamicTable({
             </div>
           </div>
 
-          <Card shadow="sm" className="mt-5 py-5">
+          <div>
             {items.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full w-full gap-2 text-default-400 text-center">
+              <div
+                className="mt-5 py-5 border-1.5 rounded-lg 
+                flex flex-col items-center justify-center h-full w-full gap-2 text-default-400 text-center"
+              >
                 <FaExclamationCircle size={50} />
                 <p>No items found</p>
               </div>
             ) : (
-              items.map((item) => (
-                <section
-                  style={{
-                    margin: "0.5rem 0",
-                  }}
-                  key={item.id}
-                >
-                  <Accordion
-                    variant="splitted"
-                    motionProps={motionProps}
-                    selectedKeys={selectedKeys}
-                    onSelectionChange={setSelectedKeys}
-                    isCompact
-                  >
-                    <AccordionItem key={item.id} textValue="accordion-item">
-                      <p>Body</p>
-                    </AccordionItem>
-                  </Accordion>
-                </section>
-              ))
+              <div className="flex flex-col gap-4 mt-4 pr-3">
+                {items.map((item) => (
+                  <section key={item.id}>
+                    <Accordion
+                      motionProps={motionProps}
+                      selectedKeys={selectedKeys}
+                      onSelectionChange={setSelectedKeys}
+                      selectionMode="multiple"
+                      isCompact
+                      variant="splitted"
+                      className="px-0"
+                    >
+                      <AccordionItem
+                        key={item.id}
+                        textValue="accordion-item"
+                        startContent={
+                          <>
+                            {/* Accordion header */}
+                            <Checkbox
+                              className="outline-none"
+                              onChange={() => {
+                                console.log("check clicked", item);
+                              }}
+                            />
+                            {item.name}
+                          </>
+                        }
+                      >
+                        {/* Accordion body */}
+                        <div className="flex gap-5 flex-wrap items-center">
+                          {columns.map((column) => (
+                            <div key={column.uid}>
+                              {renderCell(item, column.uid, true)}
+                            </div>
+                          ))}
+                        </div>
+                      </AccordionItem>
+                    </Accordion>
+                  </section>
+                ))}
+              </div>
             )}
-          </Card>
+          </div>
         </>
       ) : (
         <Table
@@ -370,7 +407,7 @@ export default function DynamicTable({
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                  <TableCell>{renderCell(item, columnKey, false)}</TableCell>
                 )}
               </TableRow>
             )}
