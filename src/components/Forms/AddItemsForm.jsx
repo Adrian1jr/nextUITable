@@ -1,4 +1,3 @@
-import { Input } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import DynamicTable from "../DynamicTable";
 
@@ -22,12 +21,32 @@ export default function AddItemsForm({ register, onFormSubmit }) {
 
   useEffect(() => {
     setRows([
-      { id: 1, name: "Tony Reichert", transactionType: "pickup" },
-      { id: 2, name: "Zoey Lang", transactionType: "pickup" },
-      { id: 3, name: "Jane Fisher", transactionType: "pickup" },
-      { id: 4, name: "William Howard", transactionType: "pickup" },
-      { id: 5, name: "Kristen Copper", transactionType: "pickup" },
-      { id: 6, name: "Brian Kim", transactionType: "pickup" },
+      {
+        id: 1,
+        selected: false,
+        name: "Tony Reichert",
+        transactionType: "pickup",
+      },
+      { id: 2, selected: false, name: "Zoey Lang", transactionType: "pickup" },
+      {
+        id: 3,
+        selected: false,
+        name: "Jane Fisher",
+        transactionType: "pickup",
+      },
+      {
+        id: 4,
+        selected: false,
+        name: "William Howard",
+        transactionType: "pickup",
+      },
+      {
+        id: 5,
+        selected: false,
+        name: "Kristen Copper",
+        transactionType: "pickup",
+      },
+      { id: 6, selected: false, name: "Brian Kim", transactionType: "pickup" },
     ]);
   }, []);
 
@@ -52,8 +71,6 @@ export default function AddItemsForm({ register, onFormSubmit }) {
     const selectedKeysWithInfo = rows.filter((item) =>
       numericKeys.includes(item.id)
     );
-
-    console.log("selectedKeysWithInfo", selectedKeysWithInfo);
 
     onFormSubmit({
       items: selectedKeysWithInfo,

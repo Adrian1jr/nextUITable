@@ -349,7 +349,10 @@ export default function DynamicTable({
                             {/* Accordion header */}
                             <Checkbox
                               className="outline-none"
-                              onChange={() => {
+                              defaultSelected={
+                                item.selected ? item.selected : false
+                              }
+                              onChange={(e) => {
                                 const newSelectedKeys = new Set(selectedKeys);
                                 if (selectedKeys.has(item.id))
                                   newSelectedKeys.delete(item.id);
@@ -357,6 +360,11 @@ export default function DynamicTable({
 
                                 setSelectedKeys(newSelectedKeys);
                                 onSelectedKeysChange(newSelectedKeys);
+                                onChangePropertyValue(
+                                  item.id,
+                                  "selected",
+                                  e.target.checked
+                                );
                               }}
                             />
                             {item.name}
