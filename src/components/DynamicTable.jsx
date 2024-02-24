@@ -13,7 +13,6 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  Checkbox,
 } from "@nextui-org/react";
 import { PlusIcon } from "./Icons/PlusIcon";
 import { SearchIcon } from "./Icons/SearchIcon";
@@ -24,6 +23,7 @@ import { TableButtonGroup } from "./TableButtonGroup";
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import { useMedia } from "react-use";
 import { FaExclamationCircle } from "react-icons/fa";
+import CheckboxWithSelection from "./CheckboxWithSelection";
 
 export default function DynamicTable({
   columns,
@@ -347,25 +347,13 @@ export default function DynamicTable({
                         startContent={
                           <>
                             {/* Accordion header */}
-                            <Checkbox
-                              className="outline-none"
-                              defaultSelected={
-                                item.selected ? item.selected : false
-                              }
-                              onChange={(e) => {
-                                const newSelectedKeys = new Set(selectedKeys);
-                                if (selectedKeys.has(item.id))
-                                  newSelectedKeys.delete(item.id);
-                                else newSelectedKeys.add(item.id);
-
-                                setSelectedKeys(newSelectedKeys);
-                                onSelectedKeysChange(newSelectedKeys);
-                                onChangePropertyValue(
-                                  item.id,
-                                  "selected",
-                                  e.target.checked
-                                );
-                              }}
+                            <CheckboxWithSelection
+                              defaultSelected={item.selected || false}
+                              itemId={item.id}
+                              selectedKeys={selectedKeys}
+                              setSelectedKeys={setSelectedKeys}
+                              onSelectedKeysChange={onSelectedKeysChange}
+                              onChangePropertyValue={onChangePropertyValue}
                             />
                             {item.name}
                           </>

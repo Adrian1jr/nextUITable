@@ -61,6 +61,7 @@ export default function AddItemsForm({ register, onFormSubmit }) {
 
   // This function is called when the user selects a row with the checkbox in the table
   const handleSelectedKeysChange = (selectedKeys) => {
+    console.log("selectedKeys", selectedKeys);
     if (selectedKeys === "all")
       return onFormSubmit({
         items: rows,
