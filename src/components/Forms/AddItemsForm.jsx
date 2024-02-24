@@ -53,6 +53,8 @@ export default function AddItemsForm({ register, onFormSubmit }) {
       numericKeys.includes(item.id)
     );
 
+    console.log("selectedKeysWithInfo", selectedKeysWithInfo);
+
     onFormSubmit({
       items: selectedKeysWithInfo,
     });

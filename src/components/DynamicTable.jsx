@@ -13,7 +13,6 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  Card,
   Checkbox,
 } from "@nextui-org/react";
 import { PlusIcon } from "./Icons/PlusIcon";
@@ -351,7 +350,13 @@ export default function DynamicTable({
                             <Checkbox
                               className="outline-none"
                               onChange={() => {
-                                console.log("check clicked", item);
+                                const newSelectedKeys = new Set(selectedKeys);
+                                if (selectedKeys.has(item.id))
+                                  newSelectedKeys.delete(item.id);
+                                else newSelectedKeys.add(item.id);
+
+                                setSelectedKeys(newSelectedKeys);
+                                onSelectedKeysChange(newSelectedKeys);
                               }}
                             />
                             {item.name}
